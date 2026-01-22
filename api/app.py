@@ -6,13 +6,11 @@ import os
 import base64
 import io
 import logging
-from pydub import AudioSegment
-import imageio_ffmpeg
+import soundfile as sf
+import numpy as np
 
 from api.runpod_client import voice_to_voice_sync
 
-
-AudioSegment.converter = imageio_ffmpeg.get_ffmpeg_exe()
 # -------------------------
 # Logging
 # -------------------------
@@ -58,15 +56,31 @@ class AudioIn(BaseModel):
 # -------------------------
 def convert_to_wav(audio_b64: str, sample_rate=16000) -> bytes:
     try:
+        # Decode base64
         audio_bytes = base64.b64decode(audio_b64)
-        audio = AudioSegment.from_file(io.BytesIO(audio_bytes))
-        audio = audio.set_channels(1).set_frame_rate(sample_rate)
+        audio_buffer = io.BytesIO(audio_bytes)
+
+        # Read audio file with soundfile
+        data, sr = sf.read(audio_buffer)
+
+        # Convert to mono if needed
+        if len(data.shape) > 1:
+            data = np.mean(data, axis=1)
+
+        # Resample if sample_rate differs
+        if sr != sample_rate:
+            import resampy  # pip install resampy
+            data = resampy.resample(data, sr, sample_rate)
+            sr = sample_rate
+
+        # Export WAV to bytes
         out = io.BytesIO()
-        audio.export(out, format="wav")
+        sf.write(out, data, sr, format='WAV')
         return out.getvalue()
+
     except Exception as e:
         logging.error(f"Error converting audio to WAV: {e}")
-        raise RuntimeError("Audio conversion failed. Ensure ffmpeg is available.")
+        raise RuntimeError("Audio conversion failed. Soundfile method failed.")
 
 # -------------------------
 # Voice-to-Voice API
