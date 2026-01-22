@@ -8,7 +8,7 @@ import asyncio
 # ===============================
 
 ENDPOINT_ID = os.getenv("RUNPOD_ENDPOINT_ID")
-BASE_URL = f"https://8okz652dp2aur4-8000.proxy.runpod.net"
+BASE_URL = f"https://t07gu2xc4a6q58-8000.proxy.runpod.net"
 
 HEADERS = {
     "Content-Type": "application/json",
