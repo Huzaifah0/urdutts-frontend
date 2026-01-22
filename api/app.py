@@ -7,12 +7,16 @@ import base64
 import io
 import logging
 from pydub import AudioSegment
-import imageio_ffmpeg
+from pathlib import Path
 
 from api.runpod_client import voice_to_voice_sync
 
 
-AudioSegment.converter = imageio_ffmpeg.get_ffmpeg_exe()
+ffmpeg_bin = str(Path(__file__).parent / "ffmpeg")
+
+# If you are using pydub:
+from pydub import AudioSegment
+AudioSegment.converter = ffmpeg_bin
 # -------------------------
 # Logging
 # -------------------------
