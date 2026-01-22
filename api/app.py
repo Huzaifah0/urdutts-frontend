@@ -7,6 +7,7 @@ import base64
 import io
 import logging
 from pydub import AudioSegment
+import imageio_ffmpeg
 
 from api.runpod_client import voice_to_voice_sync
 
