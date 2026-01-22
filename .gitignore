@@ -32,7 +32,7 @@ cache/
 cache_*
 
 # KB / data
-*.txt
+
 .cache.json
 .KB.json
 *.csv
