@@ -10,6 +10,8 @@ from pydub import AudioSegment
 
 from api.runpod_client import voice_to_voice_sync
 
+
+AudioSegment.converter = os.path.join(os.path.dirname(__file__), "ffmpeg")
 # -------------------------
 # Logging
 # -------------------------
