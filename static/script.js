@@ -38,6 +38,52 @@ function playAudio(base64Audio) {
 }
 
 // ===============================
+// Audio playback helper (Chunked)
+// ===============================
+function playAudioChunks(chunks) {
+    if (!Array.isArray(chunks) || chunks.length === 0) {
+        status.innerText = "Error: No audio response from AI";
+        return;
+    }
+
+    let index = 0;
+
+    const playNext = () => {
+        if (index >= chunks.length) {
+            status.innerText = "AI response completed";
+            return;
+        }
+
+        const base64Audio = chunks[index++];
+        try {
+            const audioBytes = Uint8Array.from(
+                atob(base64Audio),
+                c => c.charCodeAt(0)
+            );
+            const blob = new Blob([audioBytes], { type: "audio/wav" });
+            const url = URL.createObjectURL(blob);
+
+            player.src = url;
+            status.innerText = "AI is speaking...";
+            player.play().catch(err => {
+                console.error("Playback error:", err);
+                status.innerText = "Error: Playback failed";
+            });
+
+            player.onended = () => {
+                URL.revokeObjectURL(url);
+                playNext();
+            };
+        } catch (err) {
+            console.error("Encoding error:", err);
+            status.innerText = "Error: Could not decode audio";
+        }
+    };
+
+    playNext();
+}
+
+// ===============================
 // Recording logic (WEBM)
 // ===============================
 recordBtn.addEventListener("click", async () => {
@@ -86,8 +132,10 @@ recordBtn.addEventListener("click", async () => {
 
                         const data = await response.json();
 
-                        // Handle single audio_b64 field from older model
-                        if (data.audio_b64) {
+                        // Prefer chunked audio, fallback to single audio_b64
+                        if (data.audio_chunks && data.audio_chunks.length > 0) {
+                            playAudioChunks(data.audio_chunks);
+                        } else if (data.audio_b64) {
                             playAudio(data.audio_b64);
                         } else {
                             status.innerText = "Error: No audio response from AI";
