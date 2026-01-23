@@ -11,7 +11,7 @@ ENDPOINT_ID = os.getenv("RUNPOD_ENDPOINT_ID")
 # Allow overriding the RunPod base URL without code changes.
 BASE_URL = os.getenv(
     "RUNPOD_BASE_URL",
-    "https://bm1xa5vvsqx5up-8000.proxy.runpod.net",
+    "https://gbth7y8nvqpbpj-8000.proxy.runpod.net",
 )
 
 HEADERS = {
