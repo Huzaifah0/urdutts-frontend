@@ -42,7 +42,6 @@ cache_*
 Thumbs.db
 
 # IDE / Editor
-.vscode/
 .idea/
 *.sublime-project
 *.sublime-workspace
@@ -56,3 +55,7 @@ Thumbs.db
 *.temp
 .vercel
 .env*.local
+temp_auto_push.bat
+temp_interactive_push.bat
+.gitignore
+branch_structure.json
